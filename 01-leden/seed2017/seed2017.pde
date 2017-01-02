@@ -2,14 +2,16 @@
 
 int seed = 2017;
 ArrayList points;
-
+float SLOPE = 1.0;
 int TRACK_LENGTH = 300;
+
+boolean RENDER = true;
 
 void setup(){
   size(256,256,P2D);
   textFont(createFont("Semplice Regular",8,false));
   //noSmooth();
-
+  colorMode(HSB);
   points = new ArrayList();
 
   frameRate(30);
@@ -19,8 +21,8 @@ void setup(){
 
 void draw(){
   float t = millis()/1000.0;
-  float perlin = noise(t);
-  float twoFiveSix = map(t,0,1,0,255);
+  float perlin = pow(noise(t),SLOPE);
+  float twoFiveSix = map(perlin,0,1,0,255);
 
   float x = noise(t,0,0);
   float y = noise(0,t,0);
@@ -29,7 +31,8 @@ void draw(){
   PVector xyz = new PVector(x*scal,y*scal,z*scal);
   addPoint(xyz.x,xyz.y,xyz.z);
 
-  background(xyz.x,xyz.y,xyz.z);
+  //pastel aesthetics
+  background(xyz.x,xyz.y/2.0,xyz.z);
   noStroke();
 
   drawTrack();
@@ -45,19 +48,22 @@ void draw(){
   text("y: "+xyz.y/256.0,5,height-(ln*2));
   text("z: "+xyz.z/256.0,5,height-ln);
 
-
+  if(RENDER)
+  saveFrame("/tmp/render/#####seed.tga");
 }
 
 void drawTrack(){
 
+pushStyle();
   noFill();
-  beginShape();
-  for(int i = 0 ; i < points.size();i++){
-    stroke(0,map(i,points.size(),0,127,12.5));
+  for(int i = 1 ; i < points.size();i++){
     PVector tmp = (PVector)points.get(i);
-    vertex(tmp.x,tmp.y);
+    PVector ttmp = (PVector)points.get(i-1);
+    stroke(255-tmp.x,255-tmp.y,255-tmp.z,map(i,points.size(),0,127,12.5));
+    strokeWeight(((tmp.z+ttmp.z)/2.0)/100.0+1.0);
+    line(tmp.x,tmp.y,ttmp.x,ttmp.y);
   }
-  endShape();
+  popStyle();
 }
 
 void addPoint(float _x,float _y,float _z){
