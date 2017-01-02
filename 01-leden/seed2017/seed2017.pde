@@ -9,11 +9,13 @@ OscP5 oscP5;
 //name the addresses you'll send and receive @
 NetAddress remote;
 
+float tempo = 1;
+
 boolean sent;
 
 PVector xyz;
 
-int fps = 25;
+int fps = 50;
 int seed = 2017;
 ArrayList points;
 float SLOPE = 1.0;
@@ -29,7 +31,7 @@ void setup(){
   colorMode(HSB);
   points = new ArrayList();
   oscP5 = new OscP5(this,12000);
-  remote = new NetAddress("127.0.0.1",1234);
+  remote = new NetAddress("127.0.0.1",57120);
 
 
   frameRate(fps);
@@ -41,7 +43,7 @@ void setup(){
 
 
 void draw(){
-  float t = millis()/1000.0;
+  float t = millis()/1000.0*tempo;
   float perlin = pow(noise(t),SLOPE);
   float twoFiveSix = map(perlin,0,1,0,255);
 
@@ -83,7 +85,7 @@ void drawTrack(){
   for(int i = 1 ; i < points.size();i++){
     PVector tmp = (PVector)points.get(i);
     PVector ttmp = (PVector)points.get(i-1);
-    stroke(255-tmp.x,255-tmp.y,255-tmp.z,map(i,points.size(),0,127,12.5));
+    stroke(tmp.x,tmp.y,tmp.z,map(i,points.size(),0,127,12.5));
     strokeWeight(((tmp.z+ttmp.z)/2.0)/100.0+1.0);
     line(tmp.x,tmp.y,ttmp.x,ttmp.y);
   }
@@ -127,10 +129,8 @@ class MidiThread extends Thread {
         // insert your midi event sending code here
         println("sent @ "+timePassed+"ms");
 
-        OscMessage msg = new OscMessage("/kof/xyz");
-        msg.add(xyz.x);
-        msg.add(xyz.y);
-        msg.add(xyz.z);
+        OscMessage msg = new OscMessage("/oo_i");
+        msg.add("~idiom.set(\\x,"+xyz.x+",\\y,"+xyz.y+",\\z,"+xyz.z+" );" );
         oscP5.send(msg,remote);
         sent = true;
 
