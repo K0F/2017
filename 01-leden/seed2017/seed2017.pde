@@ -37,7 +37,7 @@ void setup(){
   midi.setPriority(Thread.NORM_PRIORITY+2); 
   midi.start();
 
-  }
+}
 
 
 void draw(){
@@ -70,7 +70,7 @@ void draw(){
   text("z: "+xyz.z/256.0,5,height-ln);
 
   if(sent)
-  sent = false;
+    sent = false;
 
   if(RENDER)
     saveFrame("/tmp/render/#####seed.tga");
