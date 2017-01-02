@@ -9,7 +9,7 @@ OscP5 oscP5;
 //name the addresses you'll send and receive @
 NetAddress remote;
 
-float tempo = 1;
+float tempo = 1.0;
 
 boolean sent;
 
@@ -19,12 +19,13 @@ int fps = 50;
 int seed = 2017;
 ArrayList points;
 float SLOPE = 1.0;
-int TRACK_LENGTH = 300;
+int TRACK_LENGTH = 100;
 
-boolean RENDER = true;
+PVector proj;
+boolean RENDER = false;
 
 void setup(){
-  size(256,256,P2D);
+  size(512,512,OPENGL);
   textFont(createFont("Semplice Regular",8,false));
   //noSmooth();
   noiseSeed(seed);
@@ -32,36 +33,41 @@ void setup(){
   points = new ArrayList();
   oscP5 = new OscP5(this,12000);
   remote = new NetAddress("127.0.0.1",57120);
+proj = new PVector(0,0,0);
+delay(1);
+  OscMessage msg = new OscMessage("/oo_i");
+  msg.add("~idiom.play();");
+  oscP5.send(msg,remote);
 
 
   frameRate(fps);
   midi = new MidiThread(fps*60);
   midi.setPriority(Thread.NORM_PRIORITY+2); 
   midi.start();
-
 }
 
 
 void draw(){
-  float t = millis()/1000.0*tempo;
+  float t = (sin(millis()/1000.0*tempo)+1.0) * 2.0 ;
+  float shift =  (millis()/100000.0);
   float perlin = pow(noise(t),SLOPE);
   float twoFiveSix = map(perlin,0,1,0,255);
 
-  float x = noise(t,0,0);
-  float y = noise(0,t,0);
-  float z = noise(0,0,t);
+  float x = noise(t,shift,shift);
+  float y = noise(shift,t,shift);
+  float z = noise(shift,shift,t);
   float scal = min(width,height);
   xyz = new PVector(x*scal,y*scal,z*scal);
   addPoint(xyz.x,xyz.y,xyz.z);
 
   //pastel aesthetics
-  background(xyz.x,xyz.y/2.0,xyz.z);
+  background(210);
   noStroke();
 
-  drawTrack();
+  drawTrack3D();
 
   fill(0,127);
-  ellipse(xyz.x,xyz.y,xyz.z/10.0,xyz.z/10.0);
+  ellipse(proj.x,proj.y,proj.z/10.0,proj.z/10.0);
 
   int ln = 10;
   fill(0);
@@ -85,12 +91,43 @@ void drawTrack(){
   for(int i = 1 ; i < points.size();i++){
     PVector tmp = (PVector)points.get(i);
     PVector ttmp = (PVector)points.get(i-1);
-    stroke(tmp.x,tmp.y,tmp.z,map(i,points.size(),0,127,12.5));
+    stroke(tmp.x,tmp.y/3.0,tmp.z,map(i,points.size(),0,127,12.5));
     strokeWeight(((tmp.z+ttmp.z)/2.0)/100.0+1.0);
     line(tmp.x,tmp.y,ttmp.x,ttmp.y);
   }
   popStyle();
 }
+
+void drawTrack3D(){
+
+  pushStyle();
+  pushMatrix();
+  translate(0,0,-width/2);
+  pushMatrix();
+  translate(width/2,height/2,width/2);
+  rotateY(frameCount/100.0);
+  translate(-width/2,-height/2,-height/2);
+  noFill();
+  box(100);
+
+  for(int i = 1 ; i < points.size();i++){
+    PVector tmp = (PVector)points.get(i);
+    PVector ttmp = (PVector)points.get(i-1);
+    //stroke(tmp.x,tmp.y/3.0,tmp.z,map(i,points.size(),0,127,12.5));
+    stroke(0,map(i,points.size(),0,127,1.5));
+    strokeWeight(((tmp.z+ttmp.z)/2.0)/100.0+1.0);
+    line(tmp.x,tmp.y,tmp.z,ttmp.x,ttmp.y,ttmp.z);
+  }
+    proj = new PVector(
+    screenX(xyz.x,xyz.y,xyz.z),
+    screenY(xyz.x,xyz.y,xyz.z),
+    screenZ(xyz.x,xyz.y,xyz.z)
+    );
+  popMatrix();
+  popMatrix();
+  popStyle();
+}
+
 
 void addPoint(float _x,float _y,float _z){
 
@@ -127,7 +164,7 @@ class MidiThread extends Thread {
           timePassed=(System.nanoTime()-previousTime)*1.0e-6;
         }
         // insert your midi event sending code here
-        println("sent @ "+timePassed+"ms");
+        //    println("sent @ "+timePassed+"ms");
 
         OscMessage msg = new OscMessage("/oo_i");
         msg.add("~idiom.set(\\x,"+xyz.x+",\\y,"+xyz.y+",\\z,"+xyz.z+" );" );
@@ -148,4 +185,12 @@ class MidiThread extends Thread {
       println("force quit...");
     }
   }
-} 
+}
+
+void exit(){
+  OscMessage msg = new OscMessage("/oo_i");
+  msg.add("~idiom.stop(5);");
+  oscP5.send(msg,remote);
+
+  super.exit();
+}
