@@ -9,13 +9,13 @@ OscP5 oscP5;
 //name the addresses you'll send and receive @
 NetAddress remote;
 
-float tempo = 4.0;
+float tempo = 8.0;
 
 boolean sent;
 
 PVector xyz;
 
-int fps = 50;
+int fps = 30;
 int seed = 2017;
 ArrayList points;
 float SLOPE = 1.0;
