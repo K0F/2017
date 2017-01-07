@@ -117,7 +117,7 @@ void drawTrack3D(){
     PVector tmp = (PVector)points.get(i);
     PVector ttmp = (PVector)points.get(i-1);
     //stroke(tmp.x,tmp.y/3.0,tmp.z,map(i,points.size(),0,127,12.5));
-    stroke(0,map(i,points.size(),0,127,1.5));
+    stroke(255,map(i,points.size(),0,127,1.5));
     strokeWeight(((tmp.z+ttmp.z)/2.0)/100.0+1.0);
     line(tmp.x,tmp.y,tmp.z,ttmp.x,ttmp.y,ttmp.z);
   }
