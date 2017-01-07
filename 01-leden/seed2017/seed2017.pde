@@ -9,7 +9,7 @@ OscP5 oscP5;
 //name the addresses you'll send and receive @
 NetAddress remote;
 
-float tempo = 1.0;
+float tempo = 4.0;
 
 boolean sent;
 
@@ -25,7 +25,7 @@ PVector proj;
 boolean RENDER = false;
 
 void setup(){
-  size(512,512,OPENGL);
+  size(800,900,OPENGL);
   textFont(createFont("Semplice Regular",8,false));
   //noSmooth();
   noiseSeed(seed);
@@ -33,8 +33,9 @@ void setup(){
   points = new ArrayList();
   oscP5 = new OscP5(this,12000);
   remote = new NetAddress("127.0.0.1",57120);
-proj = new PVector(0,0,0);
-delay(1);
+  proj = new PVector(0,0,0);
+  xyz = new PVector(0,0,0); 
+  
   OscMessage msg = new OscMessage("/oo_i");
   msg.add("~idiom.play();");
   oscP5.send(msg,remote);
@@ -43,12 +44,14 @@ delay(1);
   frameRate(fps);
   midi = new MidiThread(fps*60);
   midi.setPriority(Thread.NORM_PRIORITY+2); 
-  midi.start();
 }
 
 
 void draw(){
-  float t = (sin(millis()/1000.0*tempo)+1.0) * 2.0 ;
+if(frameCount==1)
+  midi.start();
+
+float t = sin(frameCount/100.0)*2 ;//( (millis()%1000.0*tempo) ) * 2.0 ;
   float shift =  (millis()/100000.0);
   float perlin = pow(noise(t),SLOPE);
   float twoFiveSix = map(perlin,0,1,0,255);
@@ -67,7 +70,7 @@ void draw(){
   drawTrack3D();
 
   fill(0,127);
-  ellipse(proj.x,proj.y,proj.z/10.0,proj.z/10.0);
+  ellipse(proj.x,proj.y,10,10);
 
   int ln = 10;
   fill(0);
@@ -118,11 +121,11 @@ void drawTrack3D(){
     strokeWeight(((tmp.z+ttmp.z)/2.0)/100.0+1.0);
     line(tmp.x,tmp.y,tmp.z,ttmp.x,ttmp.y,ttmp.z);
   }
-    proj = new PVector(
-    screenX(xyz.x,xyz.y,xyz.z),
-    screenY(xyz.x,xyz.y,xyz.z),
-    screenZ(xyz.x,xyz.y,xyz.z)
-    );
+  proj = new PVector(
+      screenX(xyz.x,xyz.y,xyz.z),
+      screenY(xyz.x,xyz.y,xyz.z),
+      screenZ(xyz.x,xyz.y,xyz.z)
+      );
   popMatrix();
   popMatrix();
   popStyle();
