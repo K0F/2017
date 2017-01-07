@@ -9,7 +9,7 @@ OscP5 oscP5;
 //name the addresses you'll send and receive @
 NetAddress remote;
 
-float tempo = 8.0;
+float tempo = 16.0;
 
 boolean sent;
 
@@ -64,7 +64,7 @@ float t = sin(frameCount/100.0)*2 ;//( (millis()%1000.0*tempo) ) * 2.0 ;
   addPoint(xyz.x,xyz.y,xyz.z);
 
   //pastel aesthetics
-  background(210);
+  background(5);
   noStroke();
 
   drawTrack3D();
@@ -94,7 +94,7 @@ void drawTrack(){
   for(int i = 1 ; i < points.size();i++){
     PVector tmp = (PVector)points.get(i);
     PVector ttmp = (PVector)points.get(i-1);
-    stroke(tmp.x,tmp.y/3.0,tmp.z,map(i,points.size(),0,127,12.5));
+    stroke(255-tmp.x,255-tmp.y/3.0,255-tmp.z,map(i,points.size(),0,127,12.5));
     strokeWeight(((tmp.z+ttmp.z)/2.0)/100.0+1.0);
     line(tmp.x,tmp.y,ttmp.x,ttmp.y);
   }
