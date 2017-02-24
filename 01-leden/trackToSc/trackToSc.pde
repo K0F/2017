@@ -44,7 +44,7 @@ void setup(){
 
   track1 = new ArrayList();
 
-  String [] raw = loadStrings("01.txt");
+  String [] raw = loadStrings("02.txt");
   rawLength = raw.length;
 
   for(int i = 0 ; i < raw.length ; i++){
@@ -58,7 +58,7 @@ void setup(){
   }
 
   OscMessage msg = new OscMessage("/oo_i");
-  msg.add("~idiom.play();");
+  msg.add("~one.play();");
   oscP5.send(msg,remote);
 
 
@@ -195,7 +195,7 @@ class MidiThread extends Thread {
         //    println("sent @ "+timePassed+"ms");
 
         OscMessage msg = new OscMessage("/oo_i");
-        msg.add("~idiom.set(\\x,"+xy.x+",\\y,"+xy.y+",\\ax,"+constrain(abs(xy.x-xy2.x),0,2)+",\\ay,"+constrain(abs(xy.y-xy2.y),0,2)+" );" );
+        msg.add("~one.set(\\x,"+xy.x+",\\y,"+xy.y+",\\ax,"+constrain(abs(xy.x-xy2.x),0,2)+",\\ay,"+constrain(abs(xy.y-xy2.y),0,2)+" );" );
         oscP5.send(msg,remote);
         sent = true;
 
@@ -217,7 +217,7 @@ class MidiThread extends Thread {
 
 void keyPressed(){
   OscMessage msg = new OscMessage("/oo_i");
-  msg.add("~idiom.rebuild();");
+  msg.add("~one.rebuild();");
   oscP5.send(msg,remote);
 
 delay(2000);
@@ -228,7 +228,7 @@ frameNo = 0;
 
 void exit(){
   OscMessage msg = new OscMessage("/oo_i");
-  msg.add("~idiom.stop(5);");
+  msg.add("~one.stop(5);");
   oscP5.send(msg,remote);
 
   super.exit();
