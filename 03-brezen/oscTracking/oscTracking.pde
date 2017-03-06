@@ -7,7 +7,12 @@
 
 
 import processing.video.*;
+import oscP5.*;
+import netP5.*;
 
+
+
+int PORT = 57120;
 
 boolean SHOW = false;
 
@@ -26,10 +31,17 @@ Capture video;
 
 
 
+OscP5 oscP5;
+NetAddress myRemoteLocation;
+
+
+
+
 float TRESH = 20.0;
 
 PVector currH, lastH;
-
+float amplitude;
+float movementSum;
 
 ArrayList mostDiff;
 
@@ -38,12 +50,15 @@ ArrayList mostDiff;
 void setup() {
   size(320, 240, P2D);
 
-// time sync 
+  // time sync 
   frameRate(fps+1.0);
 
   currH = new PVector(width/2, height/2);
   lastH = new PVector(width/2, height/2);
+  movementSum = amplitude = 0;
 
+  myRemoteLocation = new NetAddress("127.0.0.1", PORT);
+  oscP5 = new OscP5(this, 12000);
 
   // This the default video input, see the GettingStartedCapture 
   // example if it creates an error
@@ -76,7 +91,6 @@ void draw() {
     mostDiff = new ArrayList();
 
 
-    int movementSum = 0; // Amount of movement in the frame
     for (int i = 0; i < numPixels; i++) { // For each pixel in the video frame...
       color currColor = video.pixels[i];
       color prevColor = previousFrame[i];
@@ -139,15 +153,19 @@ void draw() {
      */
   }
 
+  amplitude += (movementSum-amplitude)/2.0;
+
   noStroke();
 
   analyze();
+  sendData();
+
   displayDiff();
   displayResult();
 }
 
 void analyze() {
-  
+
   // calcuate medians
   for (int i = 0; i < mostDiff.size(); i++) {
     Pix tmp = (Pix)mostDiff.get(i);
@@ -165,15 +183,23 @@ void analyze() {
   }
 }
 
-void displayResult(){
- 
+void sendData() {
+
+  OscMessage myMessage = new OscMessage("/live");
+  myMessage.add(sx/( width+0.0 ));
+  myMessage.add(sy/(1.0-( height+0.0 )));
+  myMessage.add(amplitude);
+
+  oscP5.send(myMessage, myRemoteLocation);
+}
+
+void displayResult() {
+
   fill(255, 120);
   rect(sx, sy, 5, 5);
 
   fill(255, 128, 0, 120);
   rect(x, y, 5, 5);
- 
-  
 }
 
 void displayDiff() {
