@@ -14,7 +14,8 @@ import netP5.*;
 
 int PORT = 57120;
 
-boolean SHOW = false;
+boolean SHOW = true;
+boolean RESULT = false;
 
 int fps = 30;
 
@@ -48,7 +49,7 @@ ArrayList mostDiff;
 
 
 void setup() {
-  size(320, 240, P2D);
+  size(320, 240,P2D);
 
   // time sync 
   frameRate(fps+1.0);
@@ -79,7 +80,7 @@ void draw() {
 
 
   float max = 0;
-  background(3);
+  //background(3);
 
   if (video.available()) {
     // When using video to manipulate the screen, use video.available() and
@@ -136,12 +137,14 @@ void draw() {
         pixels[i] = 0xff000000 | (diffR << 16) | (diffG << 8) | diffB;
 
       previousFrame[i] = currColor;
-    }
-
-
 
     if (SHOW)
       updatePixels();
+  
+}
+
+
+
 
     /*
     // To prevent flicker from frames that are all black (no movement),
@@ -153,14 +156,16 @@ void draw() {
      */
   }
 
-  amplitude += (movementSum-amplitude)/2.0;
+  amplitude += (movementSum-amplitude)/1.1;
 
   noStroke();
 
   analyze();
   sendData();
 
+if(RESULT)
   displayDiff();
+  
   displayResult();
 }
 
@@ -188,7 +193,7 @@ void sendData() {
   OscMessage myMessage = new OscMessage("/live");
   myMessage.add(1.0-(sx/( width+0.0 )));
   myMessage.add(1.0-(sy/height+0.0 ));
-  myMessage.add(amplitude);
+  myMessage.add(amplitude/10000000.0);
 
   oscP5.send(myMessage, myRemoteLocation);
 }
