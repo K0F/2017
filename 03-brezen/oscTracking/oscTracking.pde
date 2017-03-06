@@ -38,7 +38,7 @@ NetAddress myRemoteLocation;
 
 
 
-float TRESH = 20.0;
+float TRESH = 15.0;
 
 PVector currH, lastH;
 float amplitude;
