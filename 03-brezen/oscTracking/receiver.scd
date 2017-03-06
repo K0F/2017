@@ -40,13 +40,13 @@ p.moveNodeToTail(\master);
 (
     ~sonify_one.ar(2);
     ~sonify_one.clock = p.clock;
-    ~sonify_one.quant=2;
-    ~sonify_one.fadeTime=0.004;
+    ~sonify_one.quant=4;
+    ~sonify_one.fadeTime=4;
     ~sonify_one={|x=0,y=0,a=0|
         var note = 36.midicps;
         var env = Pulse.ar(y*~tempo*50).softclip*2;
-        var sig = VarSaw.ar(y.range(50,60) + (env**(20)+(x*200)),0,env**(20)*8pi) * env;
-        sig = Resonz.ar(sig,x.range(50,5000),y+0.001);
+        var sig = VarSaw.ar(y.range(1,2000) + (env**(20)+(x*200)),0,env**(20)*8pi) * env;
+        sig = Resonz.ar(sig,x.range(note/4,note*4),y+0.001);
         sig = Normalizer.ar(sig) * env;
         sig = CombN.ar(sig,1/(y*note),1/(y*note),1/3);
         [x,y,a].poll;
