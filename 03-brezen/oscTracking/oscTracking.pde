@@ -187,7 +187,7 @@ void sendData() {
 
   OscMessage myMessage = new OscMessage("/live");
   myMessage.add(sx/( width+0.0 ));
-  myMessage.add(sy/(1.0-( height+0.0 )));
+  myMessage.add(1.0-(sy/height+0.0 ));
   myMessage.add(amplitude);
 
   oscP5.send(myMessage, myRemoteLocation);
