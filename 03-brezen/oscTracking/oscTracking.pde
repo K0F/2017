@@ -186,7 +186,7 @@ void analyze() {
 void sendData() {
 
   OscMessage myMessage = new OscMessage("/live");
-  myMessage.add(sx/( width+0.0 ));
+  myMessage.add(1.0-(sx/( width+0.0 )));
   myMessage.add(1.0-(sy/height+0.0 ));
   myMessage.add(amplitude);
 
