@@ -11,7 +11,7 @@ import processing.video.*;
 
 boolean SHOW = false;
 
-int fps = 10;
+int fps = 30;
 
 float x = 0;
 float y = 0;
@@ -26,7 +26,7 @@ Capture video;
 
 
 
-float TRESH = 10;
+float TRESH = 20.0;
 
 PVector currH, lastH;
 
@@ -38,7 +38,8 @@ ArrayList mostDiff;
 void setup() {
   size(320, 240, P2D);
 
-  frameRate(fps);
+// time sync 
+  frameRate(fps+1.0);
 
   currH = new PVector(width/2, height/2);
   lastH = new PVector(width/2, height/2);
@@ -55,13 +56,13 @@ void setup() {
   // Create an array to store the previously captured frame
   previousFrame = new int[numPixels];
   loadPixels();
-  
-    mostDiff = new ArrayList();
+
+  mostDiff = new ArrayList();
 }
 
 void draw() {
-  
-  
+
+
   float max = 0;
   background(3);
 
@@ -71,7 +72,7 @@ void draw() {
     video.read(); // Read the new frame from the camera
     video.loadPixels(); // Make its pixels[] array available
     int curPixDiff = 0;
-    
+
     mostDiff = new ArrayList();
 
 
@@ -102,9 +103,6 @@ void draw() {
       if (curPixDiff >= TRESH) {
 
         mostDiff.add(new Pix( (i%width), (i/width), curPixDiff));
-
-        x += ((i%width)-x)/((float)(256.0-curPixDiff)*5.0);
-        y += ((i/width)-y)/((float)(256.0-curPixDiff)*5.0);
       }
 
 
@@ -118,20 +116,18 @@ void draw() {
       //pixels[i] = color(diffR, diffG, diffB);
       // The following line is much faster, but more confusing to read
       // Save the current color into the 'previous' buffer
-      
-      
-if(SHOW)
-      pixels[i] = 0xff000000 | (diffR << 16) | (diffG << 8) | diffB;
+
+
+      if (SHOW)
+        pixels[i] = 0xff000000 | (diffR << 16) | (diffG << 8) | diffB;
 
       previousFrame[i] = currColor;
     }
 
-    sx += (x-sx)/10.0;
-    sy += (y-sy)/10.0;
 
 
-if(SHOW)
-    updatePixels();
+    if (SHOW)
+      updatePixels();
 
     /*
     // To prevent flicker from frames that are all black (no movement),
@@ -145,31 +141,55 @@ if(SHOW)
 
   noStroke();
 
+  analyze();
+  displayDiff();
+  displayResult();
+}
+
+void analyze() {
+  
+  // calcuate medians
+  for (int i = 0; i < mostDiff.size(); i++) {
+    Pix tmp = (Pix)mostDiff.get(i);
+    x += (tmp.x-x)/((float)((256.0-tmp.w)*TRESH));
+    y += (tmp.y-y)/((float)((256.0-tmp.w)*TRESH));
+  }
+
+  //smooth the center, hopefully
+  for (int i = 0; i < mostDiff.size(); i++) {
+    Pix tmp = (Pix)mostDiff.get(i);
+
+    float len = mostDiff.size()+0.0;
+    sx += (x-sx)/len;
+    sy += (y-sy)/len;
+  }
+}
+
+void displayResult(){
+ 
   fill(255, 120);
   rect(sx, sy, 5, 5);
 
   fill(255, 128, 0, 120);
   rect(x, y, 5, 5);
+ 
   
-  
-  displayDiff();
 }
 
+void displayDiff() {
 
-void displayDiff(){
-  
-   for(int i = 0 ; i < mostDiff.size();i++){
+  for (int i = 0; i < mostDiff.size(); i++) {
     Pix tmp = (Pix)mostDiff.get(i);
-    stroke(255,tmp.w);
-    point(tmp.x,tmp.y);
-   }
+    stroke(255, tmp.w);
+    point(tmp.x, tmp.y);
+  }
 }
 
 // helper pix
 class Pix {
   int x, y;
   float w;
-  
+
   Pix(int _x, int _y, float _w) {
     x=_x;
     y=_y;
