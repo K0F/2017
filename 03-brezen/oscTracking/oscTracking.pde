@@ -49,10 +49,10 @@ ArrayList mostDiff;
 
 
 void setup() {
-  size(320, 240,P2D);
+  size(320, 240, OPENGL);
 
   // time sync 
-  frameRate(fps+1.0);
+  frameRate(fps*2);
 
   currH = new PVector(width/2, height/2);
   lastH = new PVector(width/2, height/2);
@@ -80,6 +80,7 @@ void draw() {
 
 
   float max = 0;
+  movementSum = 0;
   //background(3);
 
   if (video.available()) {
@@ -109,7 +110,7 @@ void draw() {
       int diffB = abs(currB - prevB);
       // Add these differences to the running tally
       curPixDiff = max(max(diffR, diffG), diffB);
-      movementSum += curPixDiff;
+      movementSum += curPixDiff / (width*height*127.0/8.0);
 
       lastH = new PVector(currH.x, currH.y);
       currH = new PVector(x, y);
@@ -138,10 +139,9 @@ void draw() {
 
       previousFrame[i] = currColor;
 
-    if (SHOW)
-      updatePixels();
-  
-}
+      if (SHOW)
+        updatePixels();
+    }
 
 
 
@@ -156,16 +156,16 @@ void draw() {
      */
   }
 
-  amplitude += (movementSum-amplitude)/1.1;
+  amplitude = movementSum;
 
   noStroke();
 
   analyze();
   sendData();
 
-if(RESULT)
-  displayDiff();
-  
+  if (RESULT)
+    displayDiff();
+
   displayResult();
 }
 
@@ -191,9 +191,9 @@ void analyze() {
 void sendData() {
 
   OscMessage myMessage = new OscMessage("/live");
-  myMessage.add(1.0-(sx/( width+0.0 )));
-  myMessage.add(1.0-(sy/height+0.0 ));
-  myMessage.add(amplitude/10000000.0);
+  myMessage.add(1.0-(x/( width+0.0 )));
+  myMessage.add(1.0-(y/height+0.0 ));
+  myMessage.add(amplitude);
 
   oscP5.send(myMessage, myRemoteLocation);
 }
