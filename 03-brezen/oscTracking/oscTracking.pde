@@ -38,7 +38,7 @@ NetAddress myRemoteLocation;
 
 
 
-float TRESH = 15.0;
+float TRESH = 30.0;
 
 PVector currH, lastH;
 float amplitude;
@@ -81,6 +81,7 @@ void draw() {
 
   float max = 0;
   movementSum = 0;
+  int count = 0;
   //background(3);
 
   if (video.available()) {
@@ -117,8 +118,8 @@ void draw() {
 
 
       if (curPixDiff >= TRESH) {
-
         mostDiff.add(new Pix( (i%width), (i/width), curPixDiff));
+        count++;
       }
 
 
@@ -148,25 +149,28 @@ void draw() {
 
     /*
     // To prevent flicker from frames that are all black (no movement),
-     // only update the screen if the image has changed.
-     if (movementSum > 0) {
-     updatePixels();
-     println(movementSum); // Print the total amount of movement to the console
-     }
+    // only update the screen if the image has changed.
+    if (movementSum > 0) {
+    updatePixels();
+    println(movementSum); // Print the total amount of movement to the console
+    }
      */
+
+    amplitude = movementSum;
+
+    noStroke();
+
+    println(count);
+    if(count>100){
+      analyze();
+      sendData();
+
+      if (RESULT)
+        displayDiff();
+
+    }
+    displayResult();
   }
-
-  amplitude = movementSum;
-
-  noStroke();
-
-  analyze();
-  sendData();
-
-  if (RESULT)
-    displayDiff();
-
-  displayResult();
 }
 
 void analyze() {
@@ -191,8 +195,8 @@ void analyze() {
 void sendData() {
 
   OscMessage myMessage = new OscMessage("/live");
-  myMessage.add(1.0-(x/( width+0.0 )));
-  myMessage.add(1.0-(y/height+0.0 ));
+  myMessage.add(1.0-(x / (width+0.0)));
+  myMessage.add(1.0-(y / (height+0.0)));
   myMessage.add(amplitude);
 
   oscP5.send(myMessage, myRemoteLocation);
