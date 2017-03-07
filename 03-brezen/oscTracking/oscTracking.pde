@@ -169,7 +169,7 @@ void draw() {
         displayDiff();
 
     }
-    displayResult();
+//    displayResult();
   }
 }
 
