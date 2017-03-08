@@ -1,8 +1,9 @@
 /**
- * Frame Differencing 
+ * based on Frame Differencing 
  * by Golan Levin. 
  *
  * Quantify the amount of movement in the video frame using frame-differencing.
+  modded by Kof
  */
 
 
