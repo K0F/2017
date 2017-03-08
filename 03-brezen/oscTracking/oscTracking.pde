@@ -19,7 +19,7 @@ int TRESHOLD = 500;
 boolean SHOW = false;
 boolean RESULT = false;
 boolean REAL = true;
-boolean SHOW_POINT = true;
+boolean SHOW_POINT = false;
 
 int fps = 30;
 
@@ -143,7 +143,7 @@ void draw() {
         pixels[i] = 0xff000000 | (diffR << 16) | (diffG << 8) | diffB;
 
       if(REAL)
-        pixels[i] = 0xff000000 | (currR << 16) | (currG << 8) | currB;
+        pixels[i] = 0xff000000 | (currR << 16) | ( currG << 8) | currB;
 
       previousFrame[i] = currColor;
 
