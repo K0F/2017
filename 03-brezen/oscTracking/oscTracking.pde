@@ -14,8 +14,12 @@ import netP5.*;
 
 int PORT = 57120;
 
-boolean SHOW = true;
+int TRESHOLD = 500;
+
+boolean SHOW = false;
 boolean RESULT = false;
+boolean REAL = true;
+boolean SHOW_POINT = true;
 
 int fps = 30;
 
@@ -82,7 +86,7 @@ void draw() {
   float max = 0;
   movementSum = 0;
   int count = 0;
-  //background(3);
+  background(3);
 
   if (video.available()) {
     // When using video to manipulate the screen, use video.available() and
@@ -138,9 +142,12 @@ void draw() {
       if (SHOW)
         pixels[i] = 0xff000000 | (diffR << 16) | (diffG << 8) | diffB;
 
+      if(REAL)
+        pixels[i] = 0xff000000 | (currR << 16) | (currG << 8) | currB;
+
       previousFrame[i] = currColor;
 
-      if (SHOW)
+      if (SHOW || REAL)
         updatePixels();
     }
 
@@ -160,8 +167,16 @@ void draw() {
 
     noStroke();
 
-    println(count);
-    if(count>100){
+  //smooth the center, hopefully
+  for (int i = 0; i < mostDiff.size(); i++) {
+    Pix tmp = (Pix)mostDiff.get(i);
+
+    float len = mostDiff.size()+0.0;
+    sx += (x-sx)/len;
+    sy += (y-sy)/len;
+  }
+   // println(count);
+    if(count>TRESHOLD){
       analyze();
       sendData();
 
@@ -169,7 +184,8 @@ void draw() {
         displayDiff();
 
     }
-//    displayResult();
+if(SHOW_POINT)
+displayResult();
   }
 }
 
@@ -182,21 +198,13 @@ void analyze() {
     y += (tmp.y-y)/((float)((256.0-tmp.w)*TRESH));
   }
 
-  //smooth the center, hopefully
-  for (int i = 0; i < mostDiff.size(); i++) {
-    Pix tmp = (Pix)mostDiff.get(i);
-
-    float len = mostDiff.size()+0.0;
-    sx += (x-sx)/len;
-    sy += (y-sy)/len;
-  }
 }
 
 void sendData() {
 
   OscMessage myMessage = new OscMessage("/live");
-  myMessage.add(1.0-(x / (width+0.0)));
-  myMessage.add(1.0-(y / (height+0.0)));
+  myMessage.add(1.0-(sx / (width+0.0)));
+  myMessage.add(1.0-(sy / (height+0.0)));
   myMessage.add(amplitude);
 
   oscP5.send(myMessage, myRemoteLocation);
