@@ -5,7 +5,7 @@
 //////////////////////////////////////
 
 int num = 1000;
-float ATTRACTION = 5000.0;
+float ATTRACTION = 1000.0;
 float FRICTION = 0.9977;
 float INTERTIA = 0.00335;
 
@@ -40,11 +40,11 @@ void setup(){
 
 void grid(float _siz){
   stroke(0,5);
-  for(float x = -cam.x+width/2.0;x<width-cam.x+(width/2.0);x+=_siz){
+  for(float x = -cam.x+width/2.0 ; x < width-cam.x + (width/2.0) ; x += _siz){
     line(x,0,x,height);
   }
 
-  for(float y = -cam.y+width/2.0;y<height-cam.y+(height/2.0);y+=_siz){
+  for(float y = -cam.y+height/2.0 ; y < height-cam.y + (height/2.0) ; y += _siz){
     line(0,y,width,y);
   }
 }
@@ -59,7 +59,7 @@ void draw(){
   grid(20);
 
   pushMatrix();
-  translate(-cam.x+width/2,-cam.y+height/2);
+  translate(-width/2+cam.x,-height/2+cam.y);
   rectMode(CENTER);
   for(int i = 0 ; i < entities.size();i++){
     Entity tmp = (Entity)entities.get(i);
