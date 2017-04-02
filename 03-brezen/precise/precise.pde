@@ -4,6 +4,8 @@ import oscP5.*;
 NetAddress sc;
 OscP5 osc;
 
+//in frames (60fps) 
+int DURATION = 36000;
 
 void setup(){
   size(320,180,P2D);
@@ -37,7 +39,7 @@ void draw(){
   float v = (sin( (frameCount/60.0*n) * 30.0 )+1.0) * 127.0;
   background( v );
   if(frameCount%2==0)
-    println(n+","+v);
+ //   println(n+","+v);
 
   fill(255-v);
   noStroke();
@@ -48,6 +50,19 @@ void draw(){
 
   //text(millis()/1000.0,width/2,height/2);
   saveFrame("/media/tmpfs/fr#####.tga"); 
+
+  if(frameCount==(DURATION)){
+  OscMessage msg = new OscMessage("/oo_i"); 
+  msg.add("~one.stop();");
+  osc.send(msg,sc);
+  
+  msg = new OscMessage("/oo_i"); 
+  msg.add("\"kill -s INT `pidof ffmpeg`\".unixCmd;");
+  osc.send(msg,sc);
+  
+delay(100);
+  exit();
+  }
 }
 
 
@@ -67,11 +82,6 @@ void send(float val,float val2){
 
 
 void stop(){
-
-
-  OscMessage msg = new OscMessage("/oo_i"); 
-  msg.add("~one.stop();");
-  osc.send(msg,sc);
 
 
   super.stop();
