@@ -10,7 +10,7 @@ void setup(){
   createFont("Semplice Regular",8);
   frameRate(60);
 
-osc= new OscP5(this, 12000);
+  osc= new OscP5(this, 12000);
   sc= new NetAddress("127.0.0.1", 57120); 
 }
 
@@ -18,22 +18,27 @@ osc= new OscP5(this, 12000);
 void draw(){
 
 
-if(frameCount==1){
+  if(frameCount==1){
 
 
-  OscMessage msg = new OscMessage("/oo_i"); 
-  msg.add("~one.play();");
-  osc.send(msg,sc);
+    OscMessage msg = new OscMessage("/oo_i"); 
+    msg.add("~one.play();");
+    osc.send(msg,sc);
+
+    msg = new OscMessage("/oo_i"); 
+    msg.add("\"xterm -e 'screc'\".unixCmd;");
+    osc.send(msg,sc);
 
 
-}
+
+  }
 
   float n = 0.5*((sin(frameCount/(60.0*60.0*10.0)*TWO_PI-HALF_PI))+1.0);
   float v = (sin( (frameCount/60.0*n) * 30.0 )+1.0) * 127.0;
   background( v );
   if(frameCount%2==0)
-  println(n+","+v);
-  
+    println(n+","+v);
+
   fill(255-v);
   noStroke();
   //rectMode(CENTER);
@@ -69,6 +74,6 @@ void stop(){
   osc.send(msg,sc);
 
 
-super.stop();
+  super.stop();
 
 }
