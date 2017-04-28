@@ -3,24 +3,21 @@
  * by Golan Levin. 
  *
  * Quantify the amount of movement in the video frame using frame-differencing.
-  modded by Kof
+  happily modded by Kof
  */
-
 
 import processing.video.*;
 import oscP5.*;
 import netP5.*;
 
-
-
 int PORT = 57120;
 
 int TRESHOLD = 500;
 
-boolean SHOW = false;
+boolean SHOW = true;
 boolean RESULT = false;
 boolean REAL = true;
-boolean SHOW_POINT = false;
+boolean SHOW_POINT = true;
 
 int fps = 30;
 
@@ -34,14 +31,8 @@ int numPixels;
 int[] previousFrame;
 Capture video;
 
-
-
-
 OscP5 oscP5;
 NetAddress myRemoteLocation;
-
-
-
 
 float TRESH = 30.0;
 
@@ -50,8 +41,6 @@ float amplitude;
 float movementSum;
 
 ArrayList mostDiff;
-
-
 
 void setup() {
   size(320, 240, OPENGL);
@@ -131,13 +120,7 @@ void draw() {
 
       if (max < curPixDiff) {
         max = curPixDiff;
-        //          println(x+" "+y);
       }
-
-      // Render the difference image to the screen
-      //pixels[i] = color(diffR, diffG, diffB);
-      // The following line is much faster, but more confusing to read
-      // Save the current color into the 'previous' buffer
 
 
       if (SHOW)
@@ -152,9 +135,6 @@ void draw() {
         updatePixels();
     }
 
-
-
-
     /*
     // To prevent flicker from frames that are all black (no movement),
     // only update the screen if the image has changed.
@@ -168,15 +148,15 @@ void draw() {
 
     noStroke();
 
-  //smooth the center, hopefully
-  for (int i = 0; i < mostDiff.size(); i++) {
-    Pix tmp = (Pix)mostDiff.get(i);
+    //smooth the center, hopefully
+    for (int i = 0; i < mostDiff.size(); i++) {
+      Pix tmp = (Pix)mostDiff.get(i);
 
-    float len = mostDiff.size()+0.0;
-    sx += (x-sx)/len;
-    sy += (y-sy)/len;
-  }
-   // println(count);
+      float len = mostDiff.size()+0.0;
+      sx += (x-sx)/len;
+      sy += (y-sy)/len;
+    }
+    // println(count);
     if(count>TRESHOLD){
       analyze();
       sendData();
@@ -185,8 +165,8 @@ void draw() {
         displayDiff();
 
     }
-if(SHOW_POINT)
-displayResult();
+    if(SHOW_POINT)
+      displayResult();
   }
 }
 
