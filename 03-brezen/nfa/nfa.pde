@@ -7,9 +7,14 @@ ArrayList filmy;
 
 float Y = 10;
 
+
+void keyPressed(){
+  save("filmy_shot.png");
+}
+
 void setup(){
 
-  size(800,6000,OPENGL);
+  size(1600,800,OPENGL);
   raw = loadStrings(filename);
   filmy = new ArrayList();
 
@@ -27,19 +32,35 @@ void setup(){
       println("chyba pri cteni "+i);
     }
   }
+
+  sort();
 }
 
 
-void draw(){
+void sort(){
 
+
+  Collections.sort(filmy, new Comparator(){
+
+      int compare(Object o1, Object o2) {
+      float p1 = ((Film)o1).getSec();
+      float p2 = ((Film)o2).getSec();
+
+      return p1 == p2 ? 0 : (p1 > p2 ? 1 : -1);
+
+      }
+      }
+      );
+
+}
+
+void draw(){
 
   background(0);
   for(int i = 0 ; i < filmy.size();i++){
     Film tmp = (Film)filmy.get(i);
     tmp.draw();
-
   }
-
 }
 
 
@@ -66,17 +87,19 @@ class Film{
     Y+=10;
   }
 
+  float getSec(){
+    return delka;
+  }
+
   void draw(){
     noStroke();
     fill(255,120);
-    lenpos.x =  map(delka,0,10000,0,-300);
+    lenpos.x = map(delka,0,10000,0,-500);
     rect(width-10,pos.y, lenpos.x ,5);
-    textAlign(LEFT);
-    text(nazev+" "+ais+" ",pos.x,pos.y);
-    textAlign(RIGHT);
-    text(delka,width+lenpos.x-10,pos.y+5);
-    pos.y += (map(delka,0,10000,10,height-10)-pos.y)/100.0;
+    textAlign( LEFT );
+    text( nazev + " " + ais + " " ,pos.x,pos.y);
+    textAlign( RIGHT );
+    text( delka, width+lenpos.x-10, pos.y+5 );
+    pos.y += ( map(delka, 0, 10000, 10,height-10)-pos.y)/100.0;
   }
-
-
 }

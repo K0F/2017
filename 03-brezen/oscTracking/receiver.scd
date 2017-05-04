@@ -21,7 +21,7 @@ p.bpm(90);
   sig = CompanderD.ar(sig,3/4,1/1.1,1/3);
   fx = LPF.ar(sig,lp);
   fx = HPF.ar(fx,hp);
-  fx = DWGReverb.ar(NumChannels.ar(fx,2),[5000,5010],1/len)/rev;
+  fx = DWGReverb3Band.ar(NumChannels.ar(fx,2),[5000,5010],1/len)/rev;
   sig = SelectX.ar(wet,[orig,fx]);
   sig = NumChannels.ar(sig,2);
   ReplaceOut.ar(0,sig);
@@ -37,16 +37,17 @@ p.moveNodeToTail(\master);
     ~sonify_one.quant=4;
     ~sonify_one.fadeTime=1;
     ~sonify_one={|x=0,y=0,a=0|
-        var mod = Duty.kr(~tempo*[4,3,2],0,Dseq([1,2,1.5,1.33333],inf));
-        var notes = [60,36,72,84,64,65,69,67,55,65,67,61].midicps;
-        var sel = Select.kr(x*notes.size,notes);
-        var sig = SinOsc.ar(sel);
-        //sig = Resonz.ar(sig,x.range(sel/4,sel*[1,2,4,8]),y+0.01);
-        sig = sig * Pulse.ar(~tempo*4*y);
-        //sig = CombN.ar(sig,1/(y*note),1/(y*note),2);
-        //[x,y,a].poll;
+        //var mod = Duty.kr(~tempo*[4,3,2],0,Dseq([1,2,1.5,1.33333],inf));
+        //var notes = [60,36,72,84,64,65,69,67,55,65,67,61].midicps;
+        //var sel = Select.kr(x*notes.size,notes);
+        var sig = Formant.ar(50,x * 5000 * [1,2,4],y * 5000 * [1,2,4,1.5]);
+        sig = Resonz.ar(sig,x.range(50/4,500*[1,2,4,8]),0.01+a);
+        sig = Normalizer.ar(sig) * a;
+        sig = sig * Pulse.ar(~tempo*2/[1,2,3,4]);
+        //sig = CombN.ar(sig,1/(50),1/(50+y),1/2);
+        
         //a.poll;
-        Splay.ar(sig,0.5,0.15);
+        Splay.ar(sig,0.5,0.25);
     };
     ~sonify_one.play;
 );
@@ -55,29 +56,31 @@ p.moveNodeToTail(\master);
 ~sonify_one.pause;
 ~sonify_one.resume;
 
-//  synth ///////////////////////////////////////
+// kick synth ///////////////////////////////////////
 
 (
-~.ar(2);
-~.quant=2;
-~.fadeTime=0.2;
-~={
-  //         |       |       |       |       |  
-  var pat = [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0].rotate(1);
-  var imp = PulseDivider.kr(~tick.kr,1,~counter.kr % pat.size);
+~kick.ar(2);
+~kick.clock = p.clock;
+~kick.quant=[16,0];
+~kick.fadeTime=0.02;
+~kick={
+  //  |       |       |       |       |  
+  var pat = [
+    1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0,
+    1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0,
+    1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0,
+    1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0,
+  ].rotate(1);
+  var imp = PulseDivider.kr(~tick.kr,1,~counter.kr%pat.size);
   var hit = Select.kr(PulseCount.kr(imp)%pat.size,pat);
-  var env = EnvGen.ar(Env([0.001,1,0.0001],[0.002,0.5],[3,-3],curve:'exp'),imp * hit);
-  var sig = [
-  SinOsc.ar(50!2),
-  ];
-  sig = Select.ar(PulseCount.kr(imp*hit)%sig.size,sig);
+  var env = EnvGen.ar(Env([0.001,1,0.0001],[0.002,1.5],[3,-3]),imp * hit);
+  var sig = SinOsc.ar(50!2,env**50*8pi);
   sig = sig * env;
   Splay.ar(sig,0.75,0.5);
 };
-~.play;
+~kick.play;
 );
-~.stop(4);
-~.clear;
-~.pause;
-~.resume;
-
+~kick.stop(4);
+~kick.clear;
+~kick.pause;
+~kick.resume;
