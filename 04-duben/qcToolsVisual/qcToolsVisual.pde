@@ -1,4 +1,7 @@
 
+
+int FRAMESKIP = 25;
+
 XML xml;
 float LENGTH;
 
@@ -10,7 +13,7 @@ void setup() {
   background(0);
 
 
-  xml = loadXML("ZF_0131_LT.xml");
+  xml = loadXML("ZF_0137_LT.mov.xml");
   XML[] children = xml.getChildren();
 
   XML frames = xml.getChild("frames");
@@ -23,12 +26,15 @@ void setup() {
     if(keys[0].getString("key").equals("lavfi.signalstats.YMIN")){
       float time = fr[i].getFloat("pkt_pts_time");
       LENGTH = max(time,LENGTH); 
+    }
+  }
 
-      /*
-         float yavg = keys[2].getFloat("value")/4.0;
-         float uavg = keys[7].getFloat("value")/4.0;
-         float vavg = keys[12].getFloat("value")/4.0;
-       */    
+
+  for(int i = 0 ; i < fr.length;i+=FRAMESKIP){
+    XML [] keys = fr[i].getChildren("tag");
+    if(keys[0].getString("key").equals("lavfi.signalstats.YMIN")){
+      float time = fr[i].getFloat("pkt_pts_time");
+      LENGTH = max(time,LENGTH); 
       float vals[] = new float[keys.length];
       for(int ii = 0 ; ii < keys.length;ii++){
         try{
@@ -38,18 +44,26 @@ void setup() {
         }
       }
 
-      allFrames.add(new Frame(i,time,vals));
+      Frame tmp = new Frame(i,time,vals);
+      tmp.draw();
 
-      // allFrames.add(new Frame(time,yavg,uavg,vavg));
+      //allFrames.add(new Frame(i,time,vals));
     }
+  }
 
+
+  /*
+
+  // allFrames.add(new Frame(time,yavg,uavg,vavg));
+  }
 
   }
 
   for(int i = 0 ; i < allFrames.size();i++){
-    Frame tmp = (Frame)allFrames.get(i);
-    tmp.draw();
+  Frame tmp = (Frame)allFrames.get(i);
+  tmp.draw();
   }
+   */
 
 }
 
@@ -141,12 +155,12 @@ class Frame{
     return rgb;
   } 
 
-void draw2(){
+  void draw2(){
     x = map(time,0,LENGTH,0,width);
-    
+
     stroke(c3[0],c3[1],c3[2],100);
     line(x,0,x,height);
-}
+  }
 
   void draw(){
     x = map(time,0,LENGTH,0,width);
@@ -161,35 +175,33 @@ void draw2(){
 
       stroke(c5[0],c5[1],c5[2],alpha);
       yy = y;
-      y += 1/5.0;
+      y += 1/10.0;
       vertex(x,yy*height,x,y*height);
 
       stroke(c4[0],c4[1],c4[2],alpha);
       yy = y;
-      y += 1/5.0;
+      y += 1/3.0;
       vertex(x,yy*height,x,y*height);
 
       stroke(c3[0],c3[1],c3[2],alpha);
       yy = y;
-      y += 1/5.0;
+      y += 1/3.0;
       vertex(x,yy*height,x,y*height);
 
       stroke(c2[0],c2[1],c2[2],alpha);
       yy = y;
-      y += 1/5.0;
+      y += 1/3.0;
       vertex(x,yy*height,x,y*height);
 
       stroke(c1[0],c1[1],c1[2],alpha);
       yy = y;
-      y += 1/5.0;
+      y += 1/10.0;
       vertex(x,yy*height,x,y*height);
 
       endShape();
     }catch(Exception e){
       println("error drawing frame "+frame);
     }
-
     //    line(x,0,x,height);
   }
-
 }
