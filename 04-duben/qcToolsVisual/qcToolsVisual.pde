@@ -1,6 +1,6 @@
 
 
-int FRAMESKIP = 25;
+int FRAMESKIP = 4;
 
 XML xml;
 float LENGTH;
