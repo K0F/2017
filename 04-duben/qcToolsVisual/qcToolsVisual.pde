@@ -1,6 +1,6 @@
 
 
-int FRAMESKIP = 4;
+int FRAMESKIP = 1;
 
 XML xml;
 float LENGTH;
@@ -9,11 +9,11 @@ ArrayList allFrames;
 
 void setup() {
 
-  size(1600,400,P2D);
+  size(6000,900,P2D);
   background(0);
 
 
-  xml = loadXML("ZF_0137_LT.mov.xml");
+  xml = loadXML("ZF_0131_LT.mov.xml");
   XML[] children = xml.getChildren();
 
   XML frames = xml.getChild("frames");
@@ -65,6 +65,7 @@ void setup() {
   }
    */
 
+  save("frame.png");
 }
 
 
@@ -148,9 +149,9 @@ class Frame{
 
   float [] yuvToRGB(float Y,float U,float V){
     float r,g,b;
-    r = Y + 1.4075 * (V - 128);
-    g = Y - 0.3455 * (U - 128) - (0.7169 * (V - 128));
-    b = Y + 1.7790 * (U - 128);
+    r = Y + 1.403 * (V - 128);
+    g = Y - 0.344 * (U - 128) - (0.714 * (V - 128));
+    b = Y + 1.770 * (U - 128);
     float rgb[] = {r,g,b};
     return rgb;
   } 

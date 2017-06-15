@@ -14,7 +14,7 @@ void keyPressed(){
 
 void setup(){
 
-  size(1600,800,OPENGL);
+  size(1200,8000,OPENGL);
   raw = loadStrings(filename);
   filmy = new ArrayList();
 
@@ -32,30 +32,10 @@ void setup(){
       println("chyba pri cteni "+i);
     }
   }
-
-  sort();
-}
-
-
-void sort(){
-
-
-  Collections.sort(filmy, new Comparator(){
-
-      int compare(Object o1, Object o2) {
-      float p1 = ((Film)o1).getSec();
-      float p2 = ((Film)o2).getSec();
-
-      return p1 == p2 ? 0 : (p1 > p2 ? 1 : -1);
-
-      }
-      }
-      );
-
 }
 
 void draw(){
-
+  
   background(0);
   for(int i = 0 ; i < filmy.size();i++){
     Film tmp = (Film)filmy.get(i);
@@ -89,6 +69,7 @@ class Film{
 
   float getSec(){
     return delka;
+
   }
 
   void draw(){

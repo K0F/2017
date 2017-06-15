@@ -3,21 +3,19 @@
  * by Golan Levin. 
  *
  * Quantify the amount of movement in the video frame using frame-differencing.
-  happily modded by Kof
+  modded by Kof
  */
+
 
 import processing.video.*;
 import oscP5.*;
 import netP5.*;
 
 
-PImage img;
-
 int PORT = 57120;
 
 int TRESHOLD = 500;
 
-boolean MASK = true;
 boolean SHOW = true;
 boolean RESULT = false;
 boolean REAL = true;
@@ -49,8 +47,6 @@ ArrayList mostDiff;
 void setup() {
   size(320, 240, OPENGL);
 
-  img = loadImage("objekt.jpg");
-
   // time sync 
   frameRate(fps*2);
 
@@ -74,11 +70,10 @@ void setup() {
   loadPixels();
 
   mostDiff = new ArrayList();
-
-  img.loadPixels();
 }
 
 void draw() {
+
 
   float max = 0;
   movementSum = 0;
@@ -93,6 +88,7 @@ void draw() {
     int curPixDiff = 0;
 
     mostDiff = new ArrayList();
+
 
     for (int i = 0; i < numPixels; i++) { // For each pixel in the video frame...
       color currColor = video.pixels[i];
@@ -126,7 +122,13 @@ void draw() {
 
       if (max < curPixDiff) {
         max = curPixDiff;
+        //          println(x+" "+y);
       }
+
+      // Render the difference image to the screen
+      //pixels[i] = color(diffR, diffG, diffB);
+      // The following line is much faster, but more confusing to read
+      // Save the current color into the 'previous' buffer
 
 
       if (SHOW)
@@ -134,12 +136,11 @@ void draw() {
 
       if(REAL)
         pixels[i] = 0xff000000 | (currR << 16) | ( currG << 8) | currB;
-            previousFrame[i] = currColor;
+
+      previousFrame[i] = currColor;
 
       if (SHOW || REAL)
         updatePixels();
-
-
     }
 
     /*
