@@ -3,17 +3,17 @@ PShader basic;
 float angle;
 PGraphics feedback;
 
-float siz = 150.0;
+float siz = 200.0;
 
-boolean render = true;
+boolean render = false;
 
 void setup(){
 
-  size(1280,720,OPENGL);
+  size(1920,1080,OPENGL);
   noStroke();
   smooth();
 
-  frameRate(25);
+  frameRate(60);
 
   feedback  = createGraphics(width,height);
   feedback.beginDraw();
@@ -21,12 +21,13 @@ void setup(){
   feedback.endDraw();
 
   basic = loadShader("frag.glsl","vert.glsl");
-  background(250);
+  background(0);
 }
 
 boolean pass;
 
 void draw(){
+  background(0);
 
   camera(width/2,height/2,300,width/2,height/2,0,0,1,0);
 
@@ -62,26 +63,15 @@ void draw(){
      endShape();
    */
   sphereDetail(128);
-  translate(-150,0);
-  fill(255,30,40,30);
+  fill(250);
   pushMatrix();
-  rotateY(angle*0.1);
-  sphere(siz);
-  popMatrix();
-  translate(150,0);
-  fill(40,255,30,30);
-  pushMatrix();
-  rotateY(angle*0.1);
-  sphere(siz);
-  popMatrix();
-  translate(150,0);
-  fill(40,30,255 ,30);
-  pushMatrix();
-  rotateY(angle*0.1);
+  rotateX(angle*1.1);
+  rotateY(angle*1.11);
+  rotateZ(angle*1.111);
   sphere(siz);
   popMatrix();
 
-  angle += 0.001;
+  angle += 0.01;
   /*
      resetMatrix();
      loadPixels();
