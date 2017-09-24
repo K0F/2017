@@ -58,8 +58,8 @@ void draw(){
         bufferL[i][rr] = (input.left.get(i));
         bufferR[i][rr] = (input.right.get(i));
       }else{
-        bufferL[i][rr] += (bufferL[i][rr-1]-bufferL[i][rr])/2.0;//(input.left.get(i));
-        bufferR[i][rr] += (bufferR[i][rr-1]-bufferR[i][rr])/2.0;//(input.right.get(i));
+        bufferL[i][rr] += (bufferL[i][rr-1]-bufferL[i][rr])/1.5;//(input.left.get(i));
+        bufferR[i][rr] += (bufferR[i][rr-1]-bufferR[i][rr])/1.5;//(input.right.get(i));
 
       }
       float L = pow(map(bufferL[i][rr],-1,1,0,1),3)*1800;
@@ -73,8 +73,9 @@ void draw(){
 
       float xR = (cos(thetaR)*R*(rr/(N+1.0)))+width/2;
       float yR = (sin(thetaR)*R*(rr/(N+1.0)))+height/2;
-      stroke(255,75);
+      stroke(255,L/10.0);
       point(xL,yL);
+      stroke(255,R/10.0);
       point(xR,yR);
 
     }
