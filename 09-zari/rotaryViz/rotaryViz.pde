@@ -73,9 +73,9 @@ void draw(){
 
       float xR = (cos(thetaR)*R*(rr/(N+1.0)))+width/2;
       float yR = (sin(thetaR)*R*(rr/(N+1.0)))+height/2;
-      stroke(255,L/10.0);
+      stroke(255,L/10.0*amp);
       point(xL,yL);
-      stroke(255,R/10.0);
+      stroke(255,R/10.0*amp);
       point(xR,yR);
 
     }
@@ -101,4 +101,14 @@ void draw(){
      }
      rec.endDraw();
    */
+}
+
+float amp = 1.0;
+
+void keyPressed(){
+  if(keyCode==UP)
+  amp = amp+=0.1;
+  if(keyCode==DOWN)
+  amp = amp-=0.1;
+  amp = constrain(amp,0,1);
 }
