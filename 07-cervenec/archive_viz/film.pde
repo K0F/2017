@@ -1,4 +1,3 @@
-
 //// FILM //////////////////////////////////////////////////////////////
 
 class Film{
@@ -76,15 +75,6 @@ class Film{
     text(nazev_katalog,0,0);
     popMatrix();
 
-  }
-
-  void draw2(){
-    boolean over = over();
-    color bg = over?color(55,55,55):color(100,100,100);
-    color fg = over?color(255,127,12):color(250,250,250);
-
-
-
     if(over){
       fill(bg);
       stroke(fg);
@@ -105,4 +95,3 @@ class Film{
 
   }
 }
-
