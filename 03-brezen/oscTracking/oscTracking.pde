@@ -14,11 +14,11 @@ import netP5.*;
 
 int PORT = 57120;
 
-int TRESHOLD = 500;
+int TRESHOLD = 25;
 
 boolean SHOW = true;
-boolean RESULT = false;
-boolean REAL = true;
+boolean RESULT = true;
+boolean REAL = false;
 boolean SHOW_POINT = true;
 
 int fps = 30;
@@ -36,7 +36,7 @@ Capture video;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 
-float TRESH = 30.0;
+float TRESH = 10.0;
 
 PVector currH, lastH;
 float amplitude;
